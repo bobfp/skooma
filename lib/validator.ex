@@ -7,14 +7,19 @@ defmodule Validator do
       is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :string) -> is_binary(data) |> error("Not a String")
       Enum.member?(schema, :int) -> is_integer(data) |> error("Not an Integer")
+      Enum.member?(schema, :float) -> is_float(data) |> error("Not a Float")
+      Enum.member?(schema, :number) -> is_number(data) |> error("Not a Number")
+      Enum.member?(schema, :atom) -> is_atom(data) |> error("Not an Atom")
+      Enum.member?(schema, :bool) -> is_boolean(data) |> error("Not a Boolean")
       Enum.member?(schema, :any) -> :ok
       true -> {:error, "Your data is all jacked up"}
     end
   end
 
   defp nested_map(data, parent_schema) do
-    schema = Enum.find(parent_schema, &is_function/1).()
-    valid?(data, schema)
+    schema = Enum.find(parent_schema, &is_function/1)
+    clean_schema = if schema,  do: schema.(), else: Enum.find(parent_schema, &is_map/1)
+    valid?(data, clean_schema)
   end
 
   defp error(bool, error) do
