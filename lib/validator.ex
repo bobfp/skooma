@@ -2,9 +2,10 @@ defmodule Validator do
   require Logger
   def valid?(data, schema) do
     cond do
+      is_tuple(schema) -> validate_tuple(data, schema)
+      is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :list) -> validate_list(data, schema)
       Enum.member?(schema, :map) -> nested_map(data, schema)
-      is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :string) -> is_binary(data) |> error("Not a String")
       Enum.member?(schema, :int) -> is_integer(data) |> error("Not an Integer")
       Enum.member?(schema, :float) -> is_float(data) |> error("Not a Float")
@@ -41,8 +42,22 @@ defmodule Validator do
     end
   end
 
+  defp validate_tuple(data, schema) do
+    data_list = Tuple.to_list(data)
+    schema_list = Tuple.to_list(schema)
+    if Enum.count(data_list) == Enum.count(schema_list) do
+      result = Enum.zip(data_list, schema_list)
+      |> Enum.map(&(valid?(elem(&1, 0), elem(&1, 1))))
+      |> Enum.reject(&(&1 == :ok))
+
+      if (Enum.count(result) == 0), do: :ok, else: result
+    else
+      {:error, "Schema length doesn't match tuple length"}
+    end
+  end
+
   defp validate_map(data, schema) do
-    result = data
+    data
     |> map_handler
     |> key_handler(schema)
     |> value_handler(schema)
