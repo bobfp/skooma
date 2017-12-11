@@ -11,15 +11,6 @@ defmodule ValidatorTest do
     assert(expected_results == results)
   end
 
-  test "bool type error" do
-    test_data = "abcdef"
-    test_schema = [:bool]
-    expected_results = {:error, ["Expected BOOLEAN, got STRING \"abcdef\""]}
-
-    results = Validator.valid?(test_data, test_schema)
-    assert(expected_results == results)
-  end
-
   test "string types" do
     test_data = "test"
     test_schema = [:string]
@@ -29,28 +20,10 @@ defmodule ValidatorTest do
     assert(expected_results == results)
   end
 
-  test "string type errors" do
-    test_data = 7
-    test_schema = [:string]
-    expected_results = {:error, ["Expected STRING, got INTEGER 7"]}
-
-    results = Validator.valid?(test_data, test_schema)
-    assert(expected_results == results)
-  end
-
   test "int types" do
     test_data = 7
     test_schema = [:int]
     expected_results = :ok
-
-    results = Validator.valid?(test_data, test_schema)
-    assert(expected_results == results)
-  end
-
-  test "int types errors" do
-    test_data = false
-    test_schema = [:int]
-    expected_results = {:error, ["Expected INTEGER, got BOOLEAN false"]}
 
     results = Validator.valid?(test_data, test_schema)
     assert(expected_results == results)

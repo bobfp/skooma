@@ -1,5 +1,7 @@
 defmodule Validator do
   require Logger
+  alias Validator.Utils
+
   def valid?(data, schema) do
     cond do
       is_tuple(schema) -> validate_tuple(data, schema)
@@ -24,27 +26,12 @@ defmodule Validator do
     valid?(data, clean_schema)
   end
 
-  def typeof(self) do
-    cond do
-      is_float(self)    -> "FLOAT"
-      is_integer(self)  -> "INTEGER"
-      is_boolean(self)  -> "BOOLEAN"
-      is_atom(self)     -> "ATOM"
-      is_binary(self)   -> "STRING"
-      is_function(self) -> "FUNCTION"
-      is_list(self)     -> "LIST"
-      is_tuple(self)    -> "TUPLE"
-      is_map(self)      -> "MAP"
-      true              -> "MYSTERY TYPE"
-    end
-  end
-
-  defp error(bool, data, schema) do
-    data_type = typeof(data)
+   defp error(bool, data, expected_type) do
+    data_type = Utils.typeof(data)
     if bool do
       :ok
     else
-      {:error, ["Expected #{schema}, got #{data_type} #{inspect data}"]}
+      {:error, ["Expected #{expected_type}, got #{data_type} #{inspect data}"]}
     end
   end
 
@@ -55,7 +42,8 @@ defmodule Validator do
     if Enum.count(results) == 0 do
       :ok
     else
-      results
+      flattened_results = Enum.map(results, fn({:error, reason}) -> {:error, List.flatten(reason)}  end)
+      {:error, Enum.map(flattened_results, fn({:error, [reason]}) -> "In list, " <> reason end)}
     end
   end
 
@@ -67,9 +55,14 @@ defmodule Validator do
       |> Enum.map(&(valid?(elem(&1, 0), elem(&1, 1))))
       |> Enum.reject(&(&1 == :ok))
 
-      if (Enum.count(result) == 0), do: :ok, else: result
+      if Enum.count(result) == 0 do
+        :ok
+      else
+        flattened_results = Enum.map(result, fn({:error, reason}) -> {:error, List.flatten(reason)}  end)
+        {:error, Enum.map(flattened_results, fn({:error, [reason]}) -> "In tuple, " <> reason end)}
+      end
     else
-      {:error, "Schema length doesn't match tuple length"}
+      {:error, ["Tuple schema doesn't match tuple length"]}
     end
   end
 
@@ -78,6 +71,16 @@ defmodule Validator do
     |> map_handler
     |> key_handler(schema)
     |> value_handler(schema)
+    |> result_handler
+  end
+
+  defp result_handler(results) do
+    case results do
+      :ok -> :ok
+      [error: error] -> {:error, [error]}
+        _ -> {:error, Keyword.values(results) |> List.flatten}
+    end
+
   end
 
   defp map_handler(data) do
@@ -108,15 +111,26 @@ defmodule Validator do
     if Enum.count(missing_keys) == 0 do
       data
     else
-      {:error, "Missing required keys: #{inspect missing_keys}"}
+      {data, {:error, "Missing required keys: #{inspect missing_keys}"}}
+    end
+  end
+
+  defp validate_child({k, v}, schema) do
+    if schema[k] |> is_nil do
+      :ok
+    else
+      valid?(v, schema[k])
     end
   end
 
   defp value_handler(data, schema) do
     case data do
-      {:error, reason} -> {:error, reason}
+      {data, {:error, reason}} ->
+        results = Enum.map(data, &(validate_child(&1, schema)))
+        |> Enum.filter(&(&1 != :ok))
+        [error: [reason]] ++ results
       _ ->
-        results = Enum.map(data, fn {k,v} -> valid?(v, schema[k]) end)
+        results = Enum.map(data, &(validate_child(&1, schema)))
         |> Enum.filter(&(&1 != :ok))
 
         if Enum.count(results) == 0 do
