@@ -6,13 +6,14 @@ defmodule Validator do
       is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :list) -> validate_list(data, schema)
       Enum.member?(schema, :map) -> nested_map(data, schema)
-      Enum.member?(schema, :string) -> is_binary(data) |> error("Not a String")
-      Enum.member?(schema, :int) -> is_integer(data) |> error("Not an Integer")
-      Enum.member?(schema, :float) -> is_float(data) |> error("Not a Float")
-      Enum.member?(schema, :number) -> is_number(data) |> error("Not a Number")
-      Enum.member?(schema, :atom) -> is_atom(data) |> error("Not an Atom")
-      Enum.member?(schema, :bool) -> is_boolean(data) |> error("Not a Boolean")
+      Enum.member?(schema, :string) -> is_binary(data) |> error(data, "STRING")
+      Enum.member?(schema, :int) -> is_integer(data) |> error(data, "INTEGER")
+      Enum.member?(schema, :float) -> is_float(data) |> error(data, "FLOAT")
+      Enum.member?(schema, :number) -> is_number(data) |> error(data, "NUMBER")
+      Enum.member?(schema, :bool) -> is_boolean(data) |> error(data, "BOOLEAN")
+      Enum.member?(schema, :atom) -> is_atom(data) |> error(data, "ATOM")
       Enum.member?(schema, :any) -> :ok
+
       true -> {:error, "Your data is all jacked up"}
     end
   end
@@ -23,11 +24,27 @@ defmodule Validator do
     valid?(data, clean_schema)
   end
 
-  defp error(bool, error) do
+  def typeof(self) do
+    cond do
+      is_float(self)    -> "FLOAT"
+      is_integer(self)  -> "INTEGER"
+      is_boolean(self)  -> "BOOLEAN"
+      is_atom(self)     -> "ATOM"
+      is_binary(self)   -> "STRING"
+      is_function(self) -> "FUNCTION"
+      is_list(self)     -> "LIST"
+      is_tuple(self)    -> "TUPLE"
+      is_map(self)      -> "MAP"
+      true              -> "MYSTERY TYPE"
+    end
+  end
+
+  defp error(bool, data, schema) do
+    data_type = typeof(data)
     if bool do
       :ok
     else
-      {:error, error}
+      {:error, ["Expected #{schema}, got #{data_type} #{inspect data}"]}
     end
   end
 
