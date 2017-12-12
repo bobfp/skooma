@@ -1,4 +1,4 @@
-defmodule ValidatorTest do
+defmodule SkoomaTest do
   use ExUnit.Case
   require Logger
 
@@ -7,7 +7,7 @@ defmodule ValidatorTest do
     test_schema = [:bool]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -16,7 +16,7 @@ defmodule ValidatorTest do
     test_schema = [:string]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -25,7 +25,7 @@ defmodule ValidatorTest do
     test_schema = [:int]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -34,7 +34,7 @@ defmodule ValidatorTest do
     test_schema = [:float]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -43,7 +43,7 @@ defmodule ValidatorTest do
     test_schema = [:number]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -52,7 +52,7 @@ defmodule ValidatorTest do
     test_schema = [:atom]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -61,7 +61,7 @@ defmodule ValidatorTest do
     test_schema = %{:key1 => [:string], "key2" => [:int]}
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -80,7 +80,7 @@ defmodule ValidatorTest do
     }
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -89,7 +89,7 @@ defmodule ValidatorTest do
     test_schema = [:list, :int]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -99,7 +99,7 @@ defmodule ValidatorTest do
     test_schema = [:list, :map, fn() -> obj_schema end]
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -108,7 +108,7 @@ defmodule ValidatorTest do
     test_schema = {[:string], [:int], [:atom]}
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -118,7 +118,7 @@ defmodule ValidatorTest do
     test_schema = {[:string], obj_schema, [:atom]}
     expected_results = :ok
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 end

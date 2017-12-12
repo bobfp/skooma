@@ -1,4 +1,4 @@
-defmodule ValidatorErrorTest do
+defmodule SkoomaErrorTest do
   use ExUnit.Case
   require Logger
 
@@ -7,7 +7,7 @@ defmodule ValidatorErrorTest do
     test_schema = [:bool]
     expected_results = {:error, ["Expected BOOLEAN, got STRING \"abcdef\""]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -16,7 +16,7 @@ defmodule ValidatorErrorTest do
     test_schema = [:string]
     expected_results = {:error, ["Expected STRING, got INTEGER 7"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -25,7 +25,7 @@ defmodule ValidatorErrorTest do
     test_schema = [:int]
     expected_results = {:error, ["Expected INTEGER, got BOOLEAN false"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -34,7 +34,7 @@ defmodule ValidatorErrorTest do
     test_schema = [:float]
     expected_results = {:error, ["Expected FLOAT, got INTEGER 8"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -43,7 +43,7 @@ defmodule ValidatorErrorTest do
     test_schema = [:number]
     expected_results = {:error, ["Expected NUMBER, got STRING \"78\""]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -52,7 +52,7 @@ defmodule ValidatorErrorTest do
     test_schema = [:atom]
     expected_results = {:error, ["Expected ATOM, got STRING \"key\""]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -63,7 +63,7 @@ defmodule ValidatorErrorTest do
                                  "Expected INTEGER, got STRING \"value1\"",
                                  "Expected INTEGER, got FLOAT 3.05"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -85,7 +85,7 @@ defmodule ValidatorErrorTest do
                             "Expected STRING, got INTEGER 9",
                             "In list, Expected STRING, got INTEGER 5"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -97,7 +97,7 @@ defmodule ValidatorErrorTest do
                                  "In list, Expected STRING, got INTEGER 3",
                                  "In list, Expected STRING, got INTEGER 4"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -109,7 +109,7 @@ defmodule ValidatorErrorTest do
                            ["In list, Expected STRING, got INTEGER 1",
                             "In list, Expected STRING, got ATOM :value2"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -120,7 +120,7 @@ defmodule ValidatorErrorTest do
                         ["In tuple, Expected INTEGER, got STRING \"2\"",
                          "In tuple, Expected ATOM, got INTEGER 3"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -129,7 +129,7 @@ defmodule ValidatorErrorTest do
     test_schema = {[:string], [:int], [:atom]}
     expected_results = {:error, ["Tuple schema doesn't match tuple length"]}
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
 
@@ -140,11 +140,7 @@ defmodule ValidatorErrorTest do
     expected_results = {:error, ["In tuple, Expected STRING, got INTEGER 1"]}
 
 
-    results = Validator.valid?(test_data, test_schema)
+    results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
   end
-
-
-
-
 end

@@ -1,4 +1,4 @@
-defmodule Validator.Utils do
+defmodule Skooma.Utils do
   def typeof(self) do
     cond do
       is_float(self)    -> "FLOAT"

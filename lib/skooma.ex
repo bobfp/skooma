@@ -1,6 +1,6 @@
-defmodule Validator do
+defmodule Skooma do
   require Logger
-  alias Validator.Utils
+  alias Skooma.Utils
 
   def valid?(data, schema) do
     cond do
@@ -16,7 +16,7 @@ defmodule Validator do
       Enum.member?(schema, :atom) -> is_atom(data) |> error(data, "ATOM")
       Enum.member?(schema, :any) -> :ok
 
-      true -> {:error, "Your data is all jacked up"}
+      true -> {:error, ["Your data is all jacked up"]}
     end
   end
 
