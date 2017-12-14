@@ -56,6 +56,24 @@ defmodule SkoomaTest do
     assert(expected_results == results)
   end
 
+  test "union types with map" do
+    test_data = %{key1: "value1"}
+    test_schema = [:union, [[:map, %{key1: [:string]}], [:int]]]
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
+  test "union types" do
+    test_data = 8
+    test_schema = [:union, [[:map, %{key1: [:string]}], [:int]]]
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
   test "keyword list types" do
     test_data = [key1: "value1", key2: 2, key3: :atom3]
     test_schema = [key1: [:string], key2: [:int], key3: [:atom]]

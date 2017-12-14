@@ -9,6 +9,7 @@ defmodule Skooma do
       is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :list) -> validate_list(data, schema)
       Enum.member?(schema, :map) -> nested_map(data, schema)
+      Enum.member?(schema, :union) -> union_handler(data, schema)
       Enum.member?(schema, :not_required) -> handle_not_required(data, schema)
       Enum.member?(schema, :string) -> is_binary(data) |> error(data, "STRING") |> custom_validator(data, schema)
       Enum.member?(schema, :int) -> is_integer(data) |> error(data, "INTEGER") |> custom_validator(data, schema)
@@ -19,6 +20,17 @@ defmodule Skooma do
       Enum.member?(schema, :any) -> :ok
 
       true -> {:error, ["Your data is all jacked up"]}
+    end
+  end
+
+  defp union_handler(data, schema) do
+    schemas = Enum.find(schema, &is_list/1)
+    results = Enum.map(schemas, &(valid?(data, &1)))
+    if Enum.any?(results, &(&1 == :ok)) do
+      :ok
+    else
+      flattened_results = Enum.map(results, fn({:error, reason}) -> {:error, List.flatten(reason)}  end)
+      {:error, Enum.map(flattened_results, fn({:error, [reason]}) -> "In Union, " <> reason end)}
     end
   end
 
@@ -127,6 +139,7 @@ defmodule Skooma do
     case results do
       :ok -> :ok
       [error: [error]] -> {:error, [error] |> List.flatten}
+      {:error, error} -> {:error, [error] |> List.flatten}
       [error: error] -> {:error, [error]}
         _ -> {:error, Keyword.values(results) |> List.flatten}
     end
@@ -137,7 +150,7 @@ defmodule Skooma do
     if is_map(data) do
       data
     else
-      {:error, "Data is not a map"}
+      {:error, ["Data is not a map"]}
     end
   end
 
@@ -178,6 +191,7 @@ defmodule Skooma do
         results = Enum.map(data, &(validate_child(&1, schema)))
         |> Enum.filter(&(&1 != :ok))
         [error: reason] ++ results
+      {:error, reason} -> {:error, reason}
       _ ->
         results = Enum.map(data, &(validate_child(&1, schema)))
         |> Enum.filter(&(&1 != :ok))
