@@ -9,6 +9,7 @@ defmodule Skooma do
       is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :list) -> validate_list(data, schema)
       Enum.member?(schema, :map) -> nested_map(data, schema)
+      Enum.member?(schema, :not_required) -> handle_not_required(data, schema)
       Enum.member?(schema, :string) -> is_binary(data) |> error(data, "STRING") |> custom_validator(data, schema)
       Enum.member?(schema, :int) -> is_integer(data) |> error(data, "INTEGER") |> custom_validator(data, schema)
       Enum.member?(schema, :float) -> is_float(data) |> error(data, "FLOAT") |> custom_validator(data, schema)
@@ -21,14 +22,22 @@ defmodule Skooma do
     end
   end
 
+  defp handle_not_required(data, schema) do
+    if data == nil do
+      :ok
+    else
+      valid?(data, Enum.reject(schema, &(&1 == :not_required)))
+    end
+  end
+
   defp custom_validator(result, data, schema) do
     case result do
-      :ok -> do_custom_validator(result, data, schema)
+      :ok -> do_custom_validator(data, schema)
       _ -> result
     end
   end
 
-  defp do_custom_validator(result, data, schema) do
+  defp do_custom_validator(data, schema) do
     validators = Enum.filter(schema, &is_function/1)
     if Enum.count(validators) == 0 do
       :ok
@@ -117,6 +126,7 @@ defmodule Skooma do
   defp result_handler(results) do
     case results do
       :ok -> :ok
+      [error: [error]] -> {:error, [error] |> List.flatten}
       [error: error] -> {:error, [error]}
         _ -> {:error, Keyword.values(results) |> List.flatten}
     end
@@ -134,8 +144,7 @@ defmodule Skooma do
   defp key_handler(data, schema) do
     case data do
       {:error, reason} -> {:error, reason}
-      _ -> required_keys =
-          schema
+      _ -> schema
           |> Enum.map(&get_required_keys/1)
           |> Enum.reject(&is_nil/1)
           |> validate_keys(data)
@@ -168,7 +177,7 @@ defmodule Skooma do
       {data, {:error, reason}} ->
         results = Enum.map(data, &(validate_child(&1, schema)))
         |> Enum.filter(&(&1 != :ok))
-        [error: [reason]] ++ results
+        [error: reason] ++ results
       _ ->
         results = Enum.map(data, &(validate_child(&1, schema)))
         |> Enum.filter(&(&1 != :ok))

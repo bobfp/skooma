@@ -83,6 +83,24 @@ defmodule SkoomaTest do
     assert(expected_results == results)
   end
 
+  test "map types not_required" do
+    test_data = %{"key2" => 3}
+    test_schema = %{:key1 => [:string, :not_required], "key2" => [:int]}
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
+  test "map types not_required with nil" do
+    test_data = %{:key1 => nil, "key2" => 3}
+    test_schema = %{:key1 => [:string, :not_required], "key2" => [:int]}
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
   test "map types complex" do
     test_data = %{
       :key1 => "value1",
@@ -102,8 +120,36 @@ defmodule SkoomaTest do
     assert(expected_results == results)
   end
 
+  test "map types complex not_required" do
+    test_data = %{
+      :key1 => "value1",
+      "key2" => %{color: "blue"},
+      "things" => ["thing1", "thing2"],
+      "stuff" => %{key3: %{}}
+    }
+    test_schema = %{
+      :key1 => [:string],
+      "key2" => [:map, %{color: [:string]}],
+      "things" => [:list, :string],
+      "stuff" => %{key3: %{key4: [:string, :not_required]}}
+    }
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
   test "list types simple" do
     test_data = [1, 2, 3, 4]
+    test_schema = [:list, :int]
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
+  test "list types empty" do
+    test_data = []
     test_schema = [:list, :int]
     expected_results = :ok
 

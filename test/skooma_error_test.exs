@@ -67,6 +67,27 @@ defmodule SkoomaErrorTest do
     assert(expected_results == results)
   end
 
+  test "map types simple errors not_required" do
+    test_data = %{:key1 => "value1", "key2" => 3.05}
+    test_schema = %{:key1 => [:int, :not_required], "key2" => [:int], "key3" => [:float]}
+    expected_results = {:error, ["Missing required keys: [\"key3\"]",
+                                 "Expected INTEGER, got STRING \"value1\"",
+                                 "Expected INTEGER, got FLOAT 3.05"]}
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
+  test "map types errors not_required" do
+    test_data = %{:key1 => 8, "key2" => 3}
+    test_schema = %{:key1 => [:string, :not_required], "key2" => [:int]}
+    expected_results = {:error, ["Expected STRING, got INTEGER 8"]}
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
+
   test "map types complex errors" do
     test_data = %{
       :key1 => "value1",
