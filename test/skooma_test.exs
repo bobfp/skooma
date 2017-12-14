@@ -56,6 +56,24 @@ defmodule SkoomaTest do
     assert(expected_results == results)
   end
 
+  test "keyword list types" do
+    test_data = [key1: "value1", key2: 2, key3: :atom3]
+    test_schema = [key1: [:string], key2: [:int], key3: [:atom]]
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
+  test "keyword list types complex" do
+    test_data = [key1: %{key4: 6}, key2: 2, key3: :atom3]
+    test_schema = [key1: [:map, %{key4: [:int]}], key2: [:int], key3: [:atom]]
+    expected_results = :ok
+
+    results = Skooma.valid?(test_data, test_schema)
+    assert(expected_results == results)
+  end
+
   test "map types simple" do
     test_data = %{:key1 => "value1", "key2" => 3}
     test_schema = %{:key1 => [:string], "key2" => [:int]}

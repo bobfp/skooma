@@ -5,18 +5,58 @@ defmodule Skooma do
   def valid?(data, schema) do
     cond do
       is_tuple(schema) -> validate_tuple(data, schema)
+      Keyword.keyword?(schema) -> validate_keyword(data, schema)
       is_map(schema) -> validate_map(data, schema)
       Enum.member?(schema, :list) -> validate_list(data, schema)
       Enum.member?(schema, :map) -> nested_map(data, schema)
-      Enum.member?(schema, :string) -> is_binary(data) |> error(data, "STRING")
-      Enum.member?(schema, :int) -> is_integer(data) |> error(data, "INTEGER")
-      Enum.member?(schema, :float) -> is_float(data) |> error(data, "FLOAT")
-      Enum.member?(schema, :number) -> is_number(data) |> error(data, "NUMBER")
-      Enum.member?(schema, :bool) -> is_boolean(data) |> error(data, "BOOLEAN")
-      Enum.member?(schema, :atom) -> is_atom(data) |> error(data, "ATOM")
+      Enum.member?(schema, :string) -> is_binary(data) |> error(data, "STRING") |> custom_validator(data, schema)
+      Enum.member?(schema, :int) -> is_integer(data) |> error(data, "INTEGER") |> custom_validator(data, schema)
+      Enum.member?(schema, :float) -> is_float(data) |> error(data, "FLOAT") |> custom_validator(data, schema)
+      Enum.member?(schema, :number) -> is_number(data) |> error(data, "NUMBER") |> custom_validator(data, schema)
+      Enum.member?(schema, :bool) -> is_boolean(data) |> error(data, "BOOLEAN") |> custom_validator(data, schema)
+      Enum.member?(schema, :atom) -> is_atom(data) |> error(data, "ATOM") |> custom_validator(data, schema)
       Enum.member?(schema, :any) -> :ok
 
       true -> {:error, ["Your data is all jacked up"]}
+    end
+  end
+
+  defp custom_validator(result, data, schema) do
+    case result do
+      :ok -> do_custom_validator(result, data, schema)
+      _ -> result
+    end
+  end
+
+  defp do_custom_validator(result, data, schema) do
+    validators = Enum.filter(schema, &is_function/1)
+    if Enum.count(validators) == 0 do
+      :ok
+    else
+      validator_results = Enum.map(validators, &(&1.(data)))
+      |> Enum.reject(&(&1 == :ok || &1 == true))
+      |> Enum.map(&(if (&1 == false), do: {:error, "Value does not match custom validator"}, else: &1))
+      if Enum.count(validator_results) == 0 do
+        :ok
+      else
+        errors = Enum.map(validator_results, fn({:error, reason}) -> reason end)
+        {:error, errors}
+      end
+    end
+  end
+
+  defp validate_keyword(data, schema) do
+    if (Keyword.keys(data) |> length) == (Keyword.keys(schema) |> length) do
+      results = Enum.map(data, fn({k,v}) -> valid?(v, schema[k]) end)
+      |> Enum.reject(&(&1 == :ok))
+      if Enum.count(results) == 0 do
+        :ok
+      else
+        flattened_results = Enum.map(results, fn({:error, reason}) -> {:error, List.flatten(reason)}  end)
+        {:error, Enum.map(flattened_results, fn({:error, [reason]}) -> "In keyword list, " <> reason end)}
+      end
+    else
+      {:error, ["Missing some keys"]}
     end
   end
 
