@@ -58,7 +58,7 @@ defmodule SkoomaTest do
 
   test "union types with map" do
     test_data = %{key1: "value1"}
-    test_schema = [:union, [[:map, %{key1: [:string]}], [:int]]]
+    test_schema = [:union, [%{key1: [:string]}, [:int]]]
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)
