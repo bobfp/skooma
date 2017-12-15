@@ -32,7 +32,7 @@ schema = %{
   :name => [:string],
   :level => [:int],
   :gender => [:atom, :not_required]
-  "potion" => [:list, :string],
+  "potions" => [:list, :string],
 }
 Skooma.valid?(data, schema)
 # :ok
