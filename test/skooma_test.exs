@@ -157,6 +157,27 @@ defmodule SkoomaTest do
     assert(expected_results == results)
   end
 
+  def hero_schema() do
+    %{
+      name: [:string],
+      race: [:string],
+      friends: [:list, :map, :not_required, &hero_schema/0]
+    }
+  end
+
+  test "recursive map" do
+    my_hero = %{
+      name: "Alkosh",
+      race: "Khajiit",
+      friends: [ 
+        %{name: "Asurah", race: "Khajiit"}, 
+        %{name: "Carlos", race: "Dwarf"}
+      ]
+    }
+
+    Skooma.valid?(my_hero, hero_schema) # :ok
+  end
+
   test "list types simple" do
     test_data = [1, 2, 3, 4]
     test_schema = [:list, :int]
