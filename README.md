@@ -1,5 +1,3 @@
--# Skooma
-
 Skooma is a simple data validation library for elixir. Skooma was developed to be used to describe and validate the incoming and outgoing data structures from a REST API, but it can easily be used throughout a code base. No one likes writing data schemas, so the main focus during development was to develop an API that allowed for quick and simple schema creation.
 
 
