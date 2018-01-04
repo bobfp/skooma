@@ -13,4 +13,12 @@ defmodule Skooma.Utils do
       true              -> "MYSTERY TYPE"
     end
   end
+
+  def to_result(bool, error_message) do
+    if bool do
+      :ok
+    else
+      {:error, error_message}
+    end
+  end
 end

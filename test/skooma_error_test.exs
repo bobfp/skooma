@@ -59,9 +59,7 @@ defmodule SkoomaErrorTest do
   test "map types simple errors" do
     test_data = %{:key1 => "value1", "key2" => 3.05}
     test_schema = %{:key1 => [:int], "key2" => [:int], "key3" => [:float]}
-    expected_results = {:error, ["Missing required keys: [\"key3\"]",
-                                 "Expected INTEGER, got STRING \"value1\"",
-                                 "Expected INTEGER, got FLOAT 3.05"]}
+    expected_results = {:error, ["Missing required keys: [\"key3\"]"]}
 
     results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
@@ -70,9 +68,7 @@ defmodule SkoomaErrorTest do
   test "map types simple errors not_required" do
     test_data = %{:key1 => "value1", "key2" => 3.05}
     test_schema = %{:key1 => [:int, :not_required], "key2" => [:int], "key3" => [:float]}
-    expected_results = {:error, ["Missing required keys: [\"key3\"]",
-                                 "Expected INTEGER, got STRING \"value1\"",
-                                 "Expected INTEGER, got FLOAT 3.05"]}
+    expected_results = {:error, ["Missing required keys: [\"key3\"]"]}
 
     results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
@@ -104,7 +100,7 @@ defmodule SkoomaErrorTest do
     expected_results = {:error,
                            ["Missing required keys: [:color]",
                             "Expected STRING, got INTEGER 9",
-                            "In list, Expected STRING, got INTEGER 5"]}
+                            "Expected STRING, got INTEGER 5"]}
 
     results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
@@ -113,10 +109,10 @@ defmodule SkoomaErrorTest do
   test "list types simple errors" do
     test_data = [1, 2, 3, 4]
     test_schema = [:list, :string]
-    expected_results = {:error, ["In list, Expected STRING, got INTEGER 1",
-                                 "In list, Expected STRING, got INTEGER 2",
-                                 "In list, Expected STRING, got INTEGER 3",
-                                 "In list, Expected STRING, got INTEGER 4"]}
+    expected_results = {:error, ["Expected STRING, got INTEGER 1",
+                                 "Expected STRING, got INTEGER 2",
+                                 "Expected STRING, got INTEGER 3",
+                                 "Expected STRING, got INTEGER 4"]}
 
     results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
@@ -127,8 +123,8 @@ defmodule SkoomaErrorTest do
     obj_schema = %{key1: [:string]}
     test_schema = [:list, :map, fn() -> obj_schema end]
     expected_results = {:error,
-                           ["In list, Expected STRING, got INTEGER 1",
-                            "In list, Expected STRING, got ATOM :value2"]}
+                           ["Expected STRING, got INTEGER 1",
+                            "Expected STRING, got ATOM :value2"]}
 
     results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
@@ -138,8 +134,8 @@ defmodule SkoomaErrorTest do
     test_data = {"thing1", "2", 3}
     test_schema = {[:string], [:int], [:atom]}
     expected_results = {:error,
-                        ["In tuple, Expected INTEGER, got STRING \"2\"",
-                         "In tuple, Expected ATOM, got INTEGER 3"]}
+                        ["Expected INTEGER, got STRING \"2\"",
+                         "Expected ATOM, got INTEGER 3"]}
 
     results = Skooma.valid?(test_data, test_schema)
     assert(expected_results == results)
@@ -158,7 +154,7 @@ defmodule SkoomaErrorTest do
     test_data = {"thing1", %{key1: 1}, :atom3}
     obj_schema = %{key1: [:string]}
     test_schema = {[:string], obj_schema, [:atom]}
-    expected_results = {:error, ["In tuple, Expected STRING, got INTEGER 1"]}
+    expected_results = {:error, ["Expected STRING, got INTEGER 1"]}
 
 
     results = Skooma.valid?(test_data, test_schema)

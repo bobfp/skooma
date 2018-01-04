@@ -22,7 +22,7 @@ defmodule SkoomaTest do
 
   test "int types" do
     test_data = 7
-    test_schema = [:int]
+    test_schema = :int
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)
@@ -94,7 +94,7 @@ defmodule SkoomaTest do
 
   test "map types simple" do
     test_data = %{:key1 => "value1", "key2" => 3}
-    test_schema = %{:key1 => [:string], "key2" => [:int]}
+    test_schema = %{:key1 => :string, "key2" => :int}
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)
@@ -175,7 +175,7 @@ defmodule SkoomaTest do
       ]
     }
 
-    Skooma.valid?(my_hero, hero_schema) # :ok
+    Skooma.valid?(my_hero, hero_schema()) # :ok
   end
 
   test "list types simple" do
