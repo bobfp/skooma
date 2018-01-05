@@ -31,7 +31,7 @@ defmodule SkoomaTest do
 
   test "float types" do
     test_data = 3.14
-    test_schema = [:float]
+    test_schema = :float
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)
@@ -40,7 +40,7 @@ defmodule SkoomaTest do
 
   test "number types" do
     test_data = 3.14
-    test_schema = [:number]
+    test_schema = :number
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)
@@ -76,7 +76,7 @@ defmodule SkoomaTest do
 
   test "keyword list types" do
     test_data = [key1: "value1", key2: 2, key3: :atom3]
-    test_schema = [key1: [:string], key2: [:int], key3: [:atom]]
+    test_schema = [key1: :string, key2: :int, key3: :atom]
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)
@@ -208,7 +208,7 @@ defmodule SkoomaTest do
 
   test "tuple types simple" do
     test_data = {"thing1", 2, :atom3}
-    test_schema = {[:string], [:int], [:atom]}
+    test_schema = {:string, :int, :atom}
     expected_results = :ok
 
     results = Skooma.valid?(test_data, test_schema)

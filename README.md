@@ -28,9 +28,9 @@ data = %{
   
 }
 schema = %{
-  :race => [:string],
-  :name => [:string],
-  :level => [:int],
+  :race => :string,
+  :name => :string,
+  :level => :int,
   :gender => [:atom, :not_required]
   "potions" => [:list, :string],
 }
@@ -45,42 +45,42 @@ Skooma supports all of the elixir data types:
 #### Boolean
 ```elixir
 data = false
-schema = [:bool]
+schema = :bool
 Skooma.valid?(data, schema) #:ok
 ```
 
 #### String
 ```elixir
 data = "test"
-schema = [:string]
+schema = :string
 Skooma.valid?(data, schema) #:ok
 ```
 
 #### Integer
 ```elixir
 data = 7
-schema = [:int]
+schema = :int
 Skooma.valid?(data, schema) #:ok
 ```
 
 #### Float
 ```elixir
 data = 3.14
-schema = [:float]
+schema = :float
 Skooma.valid?(data, schema) #:ok
 ```
 
 #### Number
 ```elixir
 data = 1.41
-schema = [:number]
+schema = :number
 Skooma.valid?(data, schema) #:ok
 ```
 
 #### Atom
 ```elixir
 data = :thing
-schema = [:atom]
+schema = :atom
 Skooma.valid?(data, schema) #:ok
 ```
 
@@ -92,8 +92,8 @@ data = %{
   "level" => 6,
 }
 schema = %{
-  :race => [:string],
-  "level" => [:int],
+  :race => :string,
+  "level" => :int,
 }
 Skooma.valid?(data, schema) # :ok
 ```
@@ -108,14 +108,14 @@ Skooma.valid?(data, schema) # :ok
 #### Tuple
 ```elixir
 data = {456.89, 365.65}
-schema = {[:float], [:float]}
+schema = {:float, :float}
 Skooma.valid?(data, schema) # :ok
 ```
 
 #### Keyword List
 ```elixir
 data = [key1: "value1", key2: 2, key3: :atom3]
-schema = [key1: [:string], key2: [:int], key3: [:atom]]
+schema = [key1: :string, key2: :int, key3: :atom]
 Skooma.valid?(data, schema) # :ok
 ```
 
@@ -125,13 +125,13 @@ Skooma.valid?(data, schema) # :ok
 Sometimes, you want a field to be optional. In this case, use the `:not_required` atom.
 ```elixir
 data = %{"key2" => 3}
-schema = %{:key1 => [:string, :not_required], "key2" => [:int]}
+schema = %{:key1 => [:string, :not_required], "key2" => :int}
 Skooma.valid?(data, schema) # :ok
 ```
 A nil value will also pass if `:not_required` is invoked
 ```elixir
 data = %{:key1 => nil, "key2" => 3}
-schema = %{:key1 => [:string, :not_required], "key2" => [:int]}
+schema = %{:key1 => [:string, :not_required], "key2" => :int}
 Skooma.valid?(data, schema) # :ok
 ```
 
@@ -147,11 +147,11 @@ my_hero = %{
   }
 }
 schema = %{
-  race: [:string],
+  race: :string,
   stats: %{
-    hp: [:int],
-    magicka: [:int],
-    xp: [:int]
+    hp: :int,
+    magicka: :int,
+    xp: :int
   }
 }
 Skooma.valid?(data, schema) # :ok
@@ -169,8 +169,8 @@ my_hero = %{
 
 def hero_schema() do
   %{
-    name: [:string],
-    race: [:string],
+    name: :string,
+    race: :string,
     friends: [:list, :map, :not_required, &hero_schema/0]
    }
 end
@@ -183,7 +183,7 @@ Skooma also lets you supply a list of schemas to allow for flexible data structu
 data1 = %{key1: "value1"}
 data2 = 8
 
-schema = [:union, [%{key1: [:string]}, [:int]]]
+schema = [:union, [%{key1: :string}, :int]]
 
 Skooma.valid?(data1, schema) # :ok
 Skooma.valid?(data2, schema) # :ok
@@ -203,7 +203,7 @@ Skooma.valid?(data, schema) # {:error, ["Expected STRING, got INTEGER 7"]}
 ```elixir
 data = %{
   :key1 => "value1",
-  "key2" => %{sports: "blue"},
+  "key2" => %{color: "blue"},
   "things" => ["thing1", 5],
   "stuff" => %{key3: %{key4: 9}}
 }
@@ -215,9 +215,8 @@ schema = %{
 }
 Skooma.valid?(data, schema) # => 
 # {:error, [
-#  "Missing required keys: [:color]",
-#  "Expected STRING, got INTEGER 9",
-#  "In list, Expected STRING, got INTEGER 5"
+#  "Expected STRING, got INTEGER 9, at stuff -> key3 -> key4",
+#  "Expected STRING, got INTEGER 5, at things -> index 1"
 # ]}
 ```
 
