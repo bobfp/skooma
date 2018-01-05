@@ -10,7 +10,7 @@ by adding `skooma` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:skooma, "~> 0.1.0"}
+    {:skooma, "~> 0.2.0"}
   ]
 end
 ```
