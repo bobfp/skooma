@@ -1,10 +1,11 @@
 defmodule Skooma.Map do
   alias Skooma.Utils
+  require Logger
 
-  def validate_map(data, schema) do
+  def validate_map(data, schema, path) do
     with :ok <- is_map(data) |> Utils.to_result("Data is not a map"),
          :ok <- key_handler(data, schema),
-         :ok <- value_handler(data, schema),
+         :ok <- value_handler(data, schema, path),
          do: :ok
   end
 
@@ -32,8 +33,8 @@ defmodule Skooma.Map do
     end
   end
 
-  defp value_handler(data, schema) do
-    results = Enum.map(data, &(validate_child(&1, schema)))
+  defp value_handler(data, schema, path) do
+    results = Enum.map(data, &(validate_child(&1, schema, path)))
     |> Enum.filter(&(&1 != :ok))
 
     if Enum.count(results) == 0 do
@@ -43,17 +44,17 @@ defmodule Skooma.Map do
     end
   end
 
-  defp validate_child({k, v}, schema) do
+  defp validate_child({k, v}, schema, path) do
     if schema[k] |> is_nil do
       :ok
     else
-      Skooma.valid?(v, schema[k])
+      Skooma.valid?(v, schema[k], path ++ [k])
     end
   end
 
-  def nested_map(data, parent_schema) do
+  def nested_map(data, parent_schema, path) do
     schema = Enum.find(parent_schema, &is_function/1)
     clean_schema = if schema,  do: schema.(), else: Enum.find(parent_schema, &is_map/1)
-    Skooma.valid?(data, clean_schema)
+    Skooma.valid?(data, clean_schema, path)
   end
 end
