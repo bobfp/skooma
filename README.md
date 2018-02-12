@@ -283,4 +283,4 @@ All contributions are welcome. If there is a validator you would like to see add
 
 ## License
 
-[MIT](LICENSE) &copy;
+[MIT](LICENSE) &copy; bcoop713
