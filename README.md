@@ -1,6 +1,21 @@
-Skooma is a simple data validation library for elixir. Skooma was developed to be used to describe and validate the incoming and outgoing data structures from a REST API, but it can easily be used throughout a code base. No one likes writing data schemas, so the main focus during development was to develop an API that allowed for quick and simple schema creation.
+# Skooma
 
+[![Hex.pm](https://img.shields.io/hexpm/v/skooma.svg)](https://hex.pm/packages/skooma)
 
+> Simple data validation library for elixir.
+
+Skooma was developed to be used to describe and validate the incoming and outgoing data structures from a REST API, but it can easily be used throughout a code base. No one likes writing data schemas, so the main focus during development was to develop an API that allowed for quick and simple schema creation.
+
+## Table of Contents
+- [Installation](#installation)
+- [Overview](#overview)
+- [Basics](#basics)
+- [Complex Schemas](#complex-schemas)
+- [Error Handling](#error-handling)
+- [Validators](#validators)
+- [Custom Validators](#custom-validators)
+- [Contributions](#contributions)
+- [License](#license)
 
 ## Installation
 
@@ -265,3 +280,7 @@ Skooma.valid?{data, schema) # {:error, ["String must be shorter than 7 character
 
 ## Contributions
 All contributions are welcome. If there is a validator you would like to see added to the library, please create an issue!
+
+## License
+
+[MIT](LICENSE) &copy;
