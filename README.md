@@ -1,6 +1,7 @@
 # Skooma
 
 [![Hex.pm](https://img.shields.io/hexpm/v/skooma.svg)](https://hex.pm/packages/skooma)
+[![Build Status](https://travis-ci.org/bcoop713/skooma.svg?branch=master)](https://travis-ci.org/bcoop713/skooma)
 
 > Simple data validation library for elixir.
 
