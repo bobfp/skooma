@@ -83,6 +83,26 @@ defmodule SkoomaErrorTest do
     assert(expected_results == results)
   end
 
+  test "map types errors custom validator" do
+    test_data1 = %{"a" => 1, "prefix_b" => 2}
+    test_data2 = %{"prefix_a" => "aa", "prefix_b" => 2}
+
+    test_schema = [:map, fn map ->
+      invalid_key = map |> Map.keys |> Enum.find(&(!(&1 =~ ~r/^prefix_/)))
+      invalid_value = map |> Map.values |> Enum.find(&(!is_number(&1)))
+      cond do
+        invalid_key -> {:error, "key #{invalid_key} not start with 'prefix_'"}
+        invalid_value -> {:error, "value #{invalid_value} is not number"}
+        true -> :ok
+      end
+    end, %{}]
+
+    expected_result1 = {:error, ["key a not start with 'prefix_'"]}
+    expected_result2 = {:error, ["value aa is not number"]}
+
+    assert  expected_result1 == Skooma.valid?(test_data1, test_schema)
+    assert  expected_result2 == Skooma.valid?(test_data2, test_schema)
+  end
 
   test "map types complex errors" do
     test_data = %{
