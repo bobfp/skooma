@@ -126,17 +126,17 @@ defmodule SkoomaErrorTest do
   #   assert(expected_results == results)
   # end
 
-  # test "list types simple errors" do
-  #   test_data = [1, 2, 3, 4]
-  #   test_schema = [:list, :string]
-  #   expected_results = {:failure, ["Expected STRING, got INTEGER 1, at index 0",
-  #                                "Expected STRING, got INTEGER 2, at index 1",
-  #                                "Expected STRING, got INTEGER 3, at index 2",
-  #                                "Expected STRING, got INTEGER 4, at index 3"]}
+  test "list types simple errors" do
+    test_data = [1, 2, 3, 4]
+    test_schema = [:list, :string]
+    expected_results = {:failure, ["Expected STRING, got INTEGER 1, at index 0",
+                                 "Expected STRING, got INTEGER 2, at index 1",
+                                 "Expected STRING, got INTEGER 3, at index 2",
+                                 "Expected STRING, got INTEGER 4, at index 3"]}
 
-  #   results = Skooma.validate(test_data, test_schema)
-  #   assert(expected_results == results)
-  # end
+    results = Skooma.validate(test_data, test_schema)
+    assert(expected_results == results)
+  end
 
   # test "list types complex errors" do
   #   test_data = [%{key1: 1}, %{key1: :value2}, %{key1: "value 3"}]

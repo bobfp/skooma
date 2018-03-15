@@ -195,14 +195,14 @@ defmodule SkoomaTest do
   #   Skooma.validate(my_hero, hero_schema()) # {:success, test_data}
   # end
 
-  # test "list types simple" do
-  #   test_data = [1, 2, 3, 4]
-  #   test_schema = [:list, :int]
-  #   expected_results = {:success, test_data}
+  test "list types simple" do
+    test_data = [1, 2, 3, 4]
+    test_schema = [:list, :int]
+    expected_results = {:success, test_data}
 
-  #   results = Skooma.validate(test_data, test_schema)
-  #   assert(expected_results == results)
-  # end
+    results = Skooma.validate(test_data, test_schema)
+    assert(expected_results == results)
+  end
 
   # test "list types empty" do
   #   test_data = []

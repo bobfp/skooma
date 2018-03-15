@@ -1,12 +1,14 @@
 defmodule Skooma do
   alias Skooma.Utils
   alias Moonsugar.Validation, as: MV
+  require Logger
 
   def validate(data, schema, path \\ []) do
     bv_partial = &(basic_validator(&1, data, schema, path))
     cond do
       is_atom(schema) -> validate(data, [schema], path)
       is_map(schema) -> map_validator(data, schema, path)
+      Enum.member?(schema, :list) -> list_validator(data, schema, path)
       Enum.member?(schema, :bool) -> bv_partial.(&is_boolean/1)
       Enum.member?(schema, :string) -> bv_partial.(&is_binary/1)
       Enum.member?(schema, :int) -> bv_partial.(&is_integer/1)
@@ -57,6 +59,14 @@ defmodule Skooma do
 
   defp values_validator(data, schema, path) do
     Enum.map(schema, fn {k, v} -> validate(data[k], v, Enum.concat(path, [k])) end)
+    |> MV.collect
+  end
+
+  defp list_validator(data, schema, path) do
+    [_ | item_schema] = schema
+    data
+    |> Enum.with_index()
+    |> Enum.map(fn ({v, i}) -> validate(v, item_schema, Enum.concat(path, ["index #{i}"])) end)
     |> MV.collect
   end
 
