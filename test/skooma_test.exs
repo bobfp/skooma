@@ -74,23 +74,23 @@ defmodule SkoomaTest do
   #   assert(expected_results == results)
   # end
 
-  # test "keyword list types" do
-  #   test_data = [key1: "value1", key2: 2, key3: :atom3]
-  #   test_schema = [key1: :string, key2: :int, key3: :atom]
-  #   expected_results = {:success, test_data}
+  test "keyword list types" do
+    test_data = [key1: "value1", key2: 2, key3: :atom3]
+    test_schema = [key1: :string, key2: :int, key3: :atom]
+    expected_results = {:success, test_data}
 
-  #   results = Skooma.validate(test_data, test_schema)
-  #   assert(expected_results == results)
-  # end
+    results = Skooma.validate(test_data, test_schema)
+    assert(expected_results == results)
+  end
 
-  # test "keyword list types complex" do
-  #   test_data = [key1: %{key4: 6}, key2: 2, key3: :atom3]
-  #   test_schema = [key1: [:map, %{key4: [:int]}], key2: [:int], key3: [:atom]]
-  #   expected_results = {:success, test_data}
+  test "keyword list types complex" do
+    test_data = [key1: %{key4: 6}, key2: 2, key3: :atom3]
+    test_schema = [key1: [:map, %{key4: [:int]}], key2: [:int], key3: [:atom]]
+    expected_results = {:success, test_data}
 
-  #   results = Skooma.validate(test_data, test_schema)
-  #   assert(expected_results == results)
-  # end
+    results = Skooma.validate(test_data, test_schema)
+    assert(expected_results == results)
+  end
 
   test "map types simple" do
     test_data = %{:key1 => "value1", "key2" => 3}
@@ -136,24 +136,24 @@ defmodule SkoomaTest do
   #   assert(expected_results == results)
   # end
 
-  # test "map types complex" do
-  #   test_data = %{
-  #     :key1 => "value1",
-  #     "key2" => %{color: "blue"},
-  #     "things" => ["thing1", "thing2"],
-  #     "stuff" => %{key3: %{key4: "thing4"}}
-  #   }
-  #   test_schema = %{
-  #     :key1 => [:string],
-  #     "key2" => [:map, %{color: [:string]}],
-  #     "things" => [:list, :string],
-  #     "stuff" => %{key3: %{key4: [:string]}}
-  #   }
-  #   expected_results = {:success, test_data}
+  test "map types complex" do
+    test_data = %{
+      :key1 => "value1",
+      "key2" => %{color: "blue"},
+      "things" => ["thing1", "thing2"],
+      "stuff" => %{key3: %{key4: "thing4"}}
+    }
+    test_schema = %{
+      :key1 => [:string],
+      "key2" => [:map, %{color: [:string]}],
+      "things" => [:list, :string],
+      "stuff" => %{key3: %{key4: [:string]}}
+    }
+    expected_results = {:success, test_data}
 
-  #   results = Skooma.validate(test_data, test_schema)
-  #   assert(expected_results == results)
-  # end
+    results = Skooma.validate(test_data, test_schema)
+    assert(expected_results == results)
+  end
 
   # test "map types complex not_required" do
   #   test_data = %{
@@ -204,14 +204,14 @@ defmodule SkoomaTest do
     assert(expected_results == results)
   end
 
-  # test "list types empty" do
-  #   test_data = []
-  #   test_schema = [:list, :int]
-  #   expected_results = {:success, test_data}
+  test "list types empty" do
+    test_data = []
+    test_schema = [:list, :int]
+    expected_results = {:success, test_data}
 
-  #   results = Skooma.validate(test_data, test_schema)
-  #   assert(expected_results == results)
-  # end
+    results = Skooma.validate(test_data, test_schema)
+    assert(expected_results == results)
+  end
 
   # test "list types complex" do
   #   test_data = [%{key1: "value1"}, %{key1: "value2"}, %{key1: "value 3"}]

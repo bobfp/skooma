@@ -59,7 +59,13 @@ defmodule SkoomaErrorTest do
   test "map types simple errors" do
     test_data = %{:key1 => "value1", "key2" => 3.05}
     test_schema = %{:key1 => [:int], "key2" => [:int], "key3" => [:float]}
-    expected_results = {:failure, ["Missing required keys: [\"key3\"]"]}
+    expected_results = {
+      :failure,
+      ["Missing required keys: [\"key3\"]",
+       "Expected INT, got STRING \"value1\", at key1",
+       "Expected INT, got FLOAT 3.05, at key2",
+       "Expected FLOAT, got ATOM nil, at key3"
+      ]}
 
     results = Skooma.validate(test_data, test_schema)
     assert(expected_results == results)
@@ -129,10 +135,10 @@ defmodule SkoomaErrorTest do
   test "list types simple errors" do
     test_data = [1, 2, 3, 4]
     test_schema = [:list, :string]
-    expected_results = {:failure, ["Expected STRING, got INTEGER 1, at index 0",
-                                 "Expected STRING, got INTEGER 2, at index 1",
-                                 "Expected STRING, got INTEGER 3, at index 2",
-                                 "Expected STRING, got INTEGER 4, at index 3"]}
+    expected_results = {:failure, ["Expected STRING, got INT 1, at index 0",
+                                 "Expected STRING, got INT 2, at index 1",
+                                 "Expected STRING, got INT 3, at index 2",
+                                 "Expected STRING, got INT 4, at index 3"]}
 
     results = Skooma.validate(test_data, test_schema)
     assert(expected_results == results)
