@@ -69,10 +69,14 @@ defmodule Skooma do
   end
 
   defp validate_list(data, schema, path) do
-    list_schema = Enum.reject(schema, &(&1 == :list))
-    data
-    |> Enum.with_index
-    |> Enum.map(fn({v, k}) -> valid?(v, list_schema, path ++ ["index #{k}"]) end)
+    if is_list(data) do
+	    list_schema = Enum.reject(schema, &(&1 == :list))
+	    data
+	    |> Enum.with_index
+	    |> Enum.map(fn({v, k}) -> valid?(v, list_schema, path ++ ["index #{k}"]) end)
+	else
+		{:error, "Expected list"}
+	end
   end
 
   defp validate_tuple(data, schema, path) do
