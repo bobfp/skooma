@@ -1,6 +1,5 @@
 defmodule Skooma do
   require Logger
-  alias Skooma.Utils
   alias Skooma.Basic
 
   def valid?(data, schema, path \\ []) do
