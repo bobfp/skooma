@@ -20,7 +20,7 @@ Skooma was developed to be used to describe and validate the incoming and outgoi
 
 ## Installation
 
-the package can be installed
+The package can be installed
 by adding `skooma` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -170,7 +170,7 @@ schema = %{
     xp: :int
   }
 }
-Skooma.valid?(data, schema) # :ok
+Skooma.valid?(my_hero, schema) # :ok
 ```
 For flexibilty and incase of recursive data structures, functions that return maps can also be used. In this case, the `:map` type must be explicitly used
 ```elixir
@@ -241,14 +241,14 @@ Skooma comes with a few additional functions that can be used to perform more co
 ```elixir
 data = "abc"
 schema = [:string, Validators.min_length(4)]
-Skooma.valid?{data, schema) # {:error, ["String must be longer than 4 characters"]}
+Skooma.valid?(data, schema) # {:error, ["String must be longer than 4 characters"]}
 ```
 
 Multiple validators can also be used at the same time:
 ```elixir
 data = "duck"
 schema = [:string, Validators.regex(~r/foo/), Validators.max_length(5)]
-Skooma.valid?{data, schema) # {:error, ["String does not match the regex pattern: ~r/foo/"]}
+Skooma.valid?(data, schema) # {:error, ["String does not match the regex pattern: ~r/foo/"]}
 ```
 
 ## Custom Validators
@@ -258,7 +258,7 @@ There are two types of custom validators. The most barebones is any function tha
 ```elixir
 data = 8
 schema = [:int, &(&1 == 0)]
-Skooma.valid?{data, schema) # {:error, ["Value does not match custom validator"]}
+Skooma.valid?(data, schema) # {:error, ["Value does not match custom validator"]}
 ```
 
 However, if you need more flexibility or a custom error message, instead of returning a boolean, your function should return either `:ok` or `{:error, "Your Custom Error Message"}`. Take the built it max_length validator as an example:
@@ -276,7 +276,7 @@ end
 
 data = "abcdefghijk"
 schema = [:string, Validators.max_length(7)]
-Skooma.valid?{data, schema) # {:error, ["String must be shorter than 7 characters"]}
+Skooma.valid?(data, schema) # {:error, ["String must be shorter than 7 characters"]}
 ```
 
 ## Contributions
